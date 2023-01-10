@@ -13,9 +13,20 @@ export default function App({ Component, pageProps }: AppProps) {
 					content="width=device-width,initial-scale=1,shrink-to-fit=no,viewport-fit=cover"
 				/>
 				{/* Favicons - https://css-tricks.com/svg-favicons-and-all-the-fun-things-we-can-do-with-them/ */}
-				<link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-				<link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml" />
-				<link rel="manifest" href="/favicon/manifest.webmanifest" />
+				<link
+					rel="icon"
+					href="/digital-trade-handbook/favicon/favicon.ico"
+					sizes="any"
+				/>
+				<link
+					rel="icon"
+					href="/digital-trade-handbook/favicon/favicon.svg"
+					type="image/svg+xml"
+				/>
+				<link
+					rel="manifest"
+					href="/digital-trade-handbook/favicon/manifest.webmanifest"
+				/>
 			</Head>
 			<Component {...pageProps} />
 		</Core>
