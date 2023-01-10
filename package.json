@@ -1,0 +1,32 @@
+{
+	"name": "digital-trade-handbook",
+	"version": "1.0.0",
+	"scripts": {
+		"build": "next build && next export",
+		"dev": "next dev",
+		"lint": "yarn lint:next && yarn lint:prettier",
+		"lint:next": "next lint",
+		"lint:prettier": "prettier --check \"**/*.{js,jsx,json,ts,tsx,md,mdx,yml,yaml}\"",
+		"start": "next start",
+		"format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md,mdx}\""
+	},
+	"dependencies": {
+		"@ag.ds-next/react": "1.0.0",
+		"@emotion/babel-preset-css-prop": "^11.2.0",
+		"@emotion/react": "^11.7.0",
+		"facepaint": "^1.2.1",
+		"gray-matter": "^4.0.3",
+		"next": "^13.0.6",
+		"next-mdx-remote": "^4.2.0",
+		"react": "18.1.0",
+		"react-dom": "18.1.0"
+	},
+	"devDependencies": {
+		"@types/node": "18.11.9",
+		"@types/react": "18.0.25",
+		"eslint": "8.29.0",
+		"eslint-config-next": "13.0.6",
+		"prettier": "^2.8.2",
+		"typescript": "4.9.3"
+	}
+}
