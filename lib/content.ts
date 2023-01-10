@@ -31,6 +31,7 @@ async function getFolderData(path: string): Promise<SidebarItem[]> {
 				return {
 					href: href,
 					label: data.title as string,
+					order: (data.order ?? -1) as number,
 					items: await getFolderData(`${path}/${file.name}`),
 				};
 			}
@@ -38,11 +39,18 @@ async function getFolderData(path: string): Promise<SidebarItem[]> {
 			return {
 				label: data.title as string,
 				href,
+				order: (data.order ?? -1) as number,
 			};
 		})
 	);
 
-	return items.filter((x): x is NonNullable<typeof x> => Boolean(x));
+	return items
+		.filter((x): x is NonNullable<typeof x> => Boolean(x))
+		.sort((a, b) => {
+			if (a.order < b.order) return -1;
+			if (a.order > b.order) return 1;
+			return 0;
+		});
 }
 
 export async function getContentMarkdownData(slug: string[]) {
