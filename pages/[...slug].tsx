@@ -1,57 +1,74 @@
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { useRouter } from 'next/router';
 import { MDXRemote } from 'next-mdx-remote';
 import { Prose } from '@ag.ds-next/react/prose';
+import { PageContent, ContentBleed } from '@ag.ds-next/react/content';
+import { Columns, Column } from '@ag.ds-next/react/columns';
+import { SideNav } from '@ag.ds-next/react/side-nav';
+import { Breadcrumbs } from '@ag.ds-next/react/breadcrumbs';
+import { Stack } from '@ag.ds-next/react/box';
 import { InpageNav } from '@ag.ds-next/react/inpage-nav';
-import { AppLayout } from '../components/AppLayout';
-import { DocumentTitle } from '../components/DocumentTitle';
+import { getNavItems } from '../lib/nav';
 import { serializeMarkdown } from '../lib/mdxUtils';
-import { mdxComponents } from '../components/mdxComponents';
-import { PageLayout } from '../components/PageLayout';
-import {
-	getSidebarItems,
-	getContentPaths,
-	getContentMarkdownData,
-	getEditPath,
-} from '../lib/content';
 import { PageTitle } from '../components/PageTitle';
+import { DocumentTitle } from '../components/DocumentTitle';
+import { AppLayout } from '../components/AppLayout';
+import {
+	getBreadcrumbs,
+	getContentMarkdownData,
+	getContentPaths,
+	getSideNavItems,
+} from '../lib/content';
 import { generateToc } from '../lib/generateToc';
+import { mdxComponents } from '../components/mdxComponents';
 
-type StaticProps = InferGetStaticPropsType<typeof getStaticProps>;
+type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
-export default function Page({
-	editPath,
-	pageTitle,
-	sidebarItems,
+export default function ContentPage({
+	breadcrumbs,
+	navItems,
+	overview,
+	sideNav,
 	source,
 	title,
 	toc,
-}: StaticProps) {
+}: Props) {
+	const { asPath } = useRouter();
 	return (
 		<>
-			<DocumentTitle title={pageTitle} />
-			<AppLayout>
-				<PageLayout
-					editPath={editPath}
-					sideNav={{
-						title: 'Home',
-						titleLink: '/',
-						items: sidebarItems,
-					}}
-				>
-					<PageTitle title={title} />
-					{toc.length > 1 ? (
-						<InpageNav
-							title="On this page"
-							links={toc.map(({ slug, title }) => ({
-								href: `#${slug}`,
-								label: title,
-							}))}
-						/>
-					) : null}
-					<Prose>
-						<MDXRemote {...source} components={mdxComponents} />
-					</Prose>
-				</PageLayout>
+			<DocumentTitle title={title} />
+			<AppLayout navItems={navItems}>
+				<PageContent>
+					<Columns>
+						<Column columnSpan={{ xs: 12, md: 4, lg: 3 }}>
+							<ContentBleed visible={{ md: false }}>
+								<SideNav
+									collapseTitle="In this section"
+									activePath={asPath}
+									{...sideNav}
+								/>
+							</ContentBleed>
+						</Column>
+						<Column columnSpan={{ xs: 12, md: 8 }} columnStart={{ lg: 5 }}>
+							<Stack gap={3}>
+								<Breadcrumbs links={breadcrumbs} />
+								<PageTitle title={title} introduction={overview} />
+								{toc.length > 1 ? (
+									<InpageNav
+										title="On this page"
+										links={toc.map(({ slug, title }) => ({
+											href: `#${slug}`,
+											label: title,
+										}))}
+									/>
+								) : null}
+								<Prose>
+									<MDXRemote {...source} components={mdxComponents} />
+								</Prose>
+							</Stack>
+						</Column>
+					</Columns>
+				</PageContent>
 			</AppLayout>
 		</>
 	);
@@ -59,27 +76,39 @@ export default function Page({
 
 export const getStaticProps: GetStaticProps<
 	{
-		editPath: Awaited<ReturnType<typeof getEditPath>>;
-		pageTitle: string;
-		sidebarItems: Awaited<ReturnType<typeof getSidebarItems>>;
+		breadcrumbs: Awaited<ReturnType<typeof getBreadcrumbs>>;
+		navItems: Awaited<ReturnType<typeof getNavItems>>;
+		overview: string | null;
 		source: Awaited<ReturnType<typeof serializeMarkdown>>;
+		sideNav: {
+			title: string;
+			titleLink: string;
+			items: Awaited<ReturnType<typeof getSideNavItems>>;
+		};
 		title: string;
 		toc: ReturnType<typeof generateToc>;
 	},
-	{ slug: string }
+	{ slug: string[] }
 > = async ({ params }) => {
-	const { slug } = params ?? {};
+	const slugParams = params?.slug ?? [];
 
-	if (!Array.isArray(slug)) {
-		return { notFound: true };
-	}
+	const [categorySlug] = slugParams;
+	const {
+		data: { title: categoryTitle },
+	} = await getContentMarkdownData([categorySlug]);
 
-	const { content, data } = await getContentMarkdownData(slug);
+	const { content, data } = await getContentMarkdownData(slugParams);
+
 	return {
 		props: {
-			editPath: await getEditPath(slug),
-			pageTitle: data.title as string,
-			sidebarItems: await getSidebarItems(),
+			breadcrumbs: await getBreadcrumbs(slugParams),
+			navItems: await getNavItems(),
+			overview: (data.overview ?? null) as string | null,
+			sideNav: {
+				title: categoryTitle,
+				titleLink: `/${categorySlug}`,
+				items: await getSideNavItems(categorySlug),
+			},
 			source: await serializeMarkdown(content),
 			title: data.title as string,
 			toc: generateToc(content),

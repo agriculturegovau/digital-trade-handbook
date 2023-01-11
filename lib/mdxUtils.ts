@@ -11,11 +11,6 @@ export async function getMarkdownData(filePath: string) {
 	return matter(fileContents);
 }
 
-export async function getJSONData(filePath: string) {
-	const fileContents = await readFile(filePath, { encoding: 'utf8' });
-	return JSON.parse(fileContents);
-}
-
 export function serializeMarkdown(
 	source: string,
 	scope?: Record<string, unknown>

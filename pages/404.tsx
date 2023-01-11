@@ -1,3 +1,4 @@
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { H1 } from '@ag.ds-next/react/heading';
 import { Text } from '@ag.ds-next/react/text';
 import { TextLink } from '@ag.ds-next/react/text-link';
@@ -5,12 +6,15 @@ import { PageContent } from '@ag.ds-next/react/content';
 import { Stack } from '@ag.ds-next/react/box';
 import { AppLayout } from '../components/AppLayout';
 import { DocumentTitle } from '../components/DocumentTitle';
+import { getNavItems } from '../lib/nav';
 
-export default function NotFoundPage() {
+type Props = InferGetStaticPropsType<typeof getStaticProps>;
+
+export default function NotFoundPage({ navItems }: Props) {
 	return (
 		<>
 			<DocumentTitle title="Error 404" />
-			<AppLayout>
+			<AppLayout navItems={navItems}>
 				<PageContent as="main" id="main-content">
 					<Stack gap={1.5}>
 						<H1>Page not found</H1>
@@ -25,3 +29,14 @@ export default function NotFoundPage() {
 		</>
 	);
 }
+
+export const getStaticProps: GetStaticProps<{
+	navItems: Awaited<ReturnType<typeof getNavItems>>;
+}> = async () => {
+	const navItems = await getNavItems();
+	return {
+		props: {
+			navItems,
+		},
+	};
+};

@@ -6,18 +6,19 @@ import { SiteFooter } from './SiteFooter';
 
 type AppLayoutProps = {
 	children?: ReactNode;
+	navItems: { label: string; href: string }[];
 };
 
-export const AppLayout = ({ children }: AppLayoutProps) => {
+export const AppLayout = ({ children, navItems }: AppLayoutProps) => {
 	return (
 		<Fragment>
 			<SkipLinks
 				links={[{ href: '#main-content', label: 'Skip to main content' }]}
 			/>
 			<Flex flexDirection="column" fontFamily="body" minHeight="100vh">
-				<SiteHeader />
+				<SiteHeader navItems={navItems} />
 				<Box flexGrow={1}>{children}</Box>
-				<SiteFooter />
+				<SiteFooter navItems={navItems} />
 			</Flex>
 		</Fragment>
 	);

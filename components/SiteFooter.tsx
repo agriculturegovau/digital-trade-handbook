@@ -1,14 +1,23 @@
 import { useMemo } from 'react';
-import { Footer } from '@ag.ds-next/react/footer';
+import { Footer, FooterDivider } from '@ag.ds-next/react/footer';
+import { LinkList } from '@ag.ds-next/react/link-list';
 import { Text } from '@ag.ds-next/react/text';
 import { Box } from '@ag.ds-next/react/box';
 import { tokens } from '@ag.ds-next/react/core';
 
-export const SiteFooter = () => {
+export const SiteFooter = ({
+	navItems,
+}: {
+	navItems: { label: string; href: string }[];
+}) => {
 	const year = useMemo(() => new Date().getFullYear(), []);
 	return (
 		<Box palette="dark">
 			<Footer background="bodyAlt">
+				<nav aria-label="footer">
+					<LinkList links={navItems} horizontal />
+				</nav>
+				<FooterDivider />
 				<Text fontSize="xs" maxWidth={tokens.maxWidth.bodyText}>
 					We acknowledge the traditional owners of country throughout Australia
 					and recognise their continuing connection to land, waters and culture.
