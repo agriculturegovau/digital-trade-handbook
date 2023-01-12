@@ -17,15 +17,18 @@ import {
 	getBreadcrumbs,
 	getContentMarkdownData,
 	getContentPaths,
+	getEditPath,
 	getSideNavItems,
 } from '../lib/content';
 import { generateToc } from '../lib/generateToc';
 import { mdxComponents } from '../components/mdxComponents';
+import { EditPage } from '../components/EditPage';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
 export default function ContentPage({
 	breadcrumbs,
+	editPath,
 	navItems,
 	overview,
 	sideNav,
@@ -65,6 +68,7 @@ export default function ContentPage({
 								<Prose>
 									<MDXRemote {...source} components={mdxComponents} />
 								</Prose>
+								<EditPage path={editPath} />
 							</Stack>
 						</Column>
 					</Columns>
@@ -77,6 +81,7 @@ export default function ContentPage({
 export const getStaticProps: GetStaticProps<
 	{
 		breadcrumbs: Awaited<ReturnType<typeof getBreadcrumbs>>;
+		editPath: Awaited<ReturnType<typeof getEditPath>>;
 		navItems: Awaited<ReturnType<typeof getNavItems>>;
 		overview: string | null;
 		source: Awaited<ReturnType<typeof serializeMarkdown>>;
@@ -102,6 +107,7 @@ export const getStaticProps: GetStaticProps<
 	return {
 		props: {
 			breadcrumbs: await getBreadcrumbs(slugParams),
+			editPath: await getEditPath(slugParams),
 			navItems: await getNavItems(),
 			overview: (data.overview ?? null) as string | null,
 			sideNav: {

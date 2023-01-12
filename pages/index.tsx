@@ -20,6 +20,7 @@ import { serializeMarkdown } from '../lib/mdxUtils';
 import { getContentMarkdownData } from '../lib/content';
 import { getNavItems, getTopLevelPages } from '../lib/nav';
 import { mdxComponents } from '../components/mdxComponents';
+import { EditPage } from '../components/EditPage';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -58,6 +59,7 @@ export default function HomePage({ navItems, source, topLevelPages }: Props) {
 						<Prose maxWidth={tokens.maxWidth.bodyText}>
 							<MDXRemote {...source} components={mdxComponents} />
 						</Prose>
+						<EditPage path="/content/index.mdx" />
 					</Stack>
 				</SectionContent>
 			</AppLayout>
