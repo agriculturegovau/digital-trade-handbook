@@ -8,21 +8,21 @@ import { SideNav } from '@ag.ds-next/react/side-nav';
 import { Breadcrumbs } from '@ag.ds-next/react/breadcrumbs';
 import { Stack } from '@ag.ds-next/react/box';
 import { InpageNav } from '@ag.ds-next/react/inpage-nav';
-import { getNavItems } from '../lib/nav';
-import { serializeMarkdown } from '../lib/mdxUtils';
-import { PageTitle } from '../components/PageTitle';
-import { DocumentTitle } from '../components/DocumentTitle';
-import { AppLayout } from '../components/AppLayout';
+import { getNavItems } from '../../lib/nav';
+import { serializeMarkdown } from '../../lib/mdxUtils';
+import { PageTitle } from '../../components/PageTitle';
+import { DocumentTitle } from '../../components/DocumentTitle';
+import { AppLayout } from '../../components/AppLayout';
 import {
 	getBreadcrumbs,
 	getContentMarkdownData,
 	getContentPaths,
 	getEditPath,
 	getSideNavItems,
-} from '../lib/content';
-import { generateToc } from '../lib/generateToc';
-import { mdxComponents } from '../components/mdxComponents';
-import { EditPage } from '../components/EditPage';
+} from '../../lib/content';
+import { generateToc } from '../../lib/generateToc';
+import { mdxComponents } from '../../components/mdxComponents';
+import { EditPage } from '../../components/EditPage';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -93,11 +93,11 @@ export const getStaticProps: GetStaticProps<
 		title: string;
 		toc: ReturnType<typeof generateToc>;
 	},
-	{ slug: string[] }
+	{ category: string; slug: string[] }
 > = async ({ params }) => {
-	const slugParams = params?.slug ?? [];
-
+	const slugParams: string[] = [params?.category, ...params?.slug];
 	const [categorySlug] = slugParams;
+
 	const {
 		data: { title: categoryTitle },
 	} = await getContentMarkdownData([categorySlug]);

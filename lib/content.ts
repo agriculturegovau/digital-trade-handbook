@@ -5,7 +5,8 @@ import { getMarkdownData } from './mdxUtils';
 import { stripMdxExtension } from './mdxUtils';
 import { slugify } from './slugify';
 
-export const CONTENT_PATH = normalize(`${process.cwd()}/content/`);
+export const CONTENT_EDIT_PATH = '/content';
+export const CONTENT_PATH = normalize(`${process.cwd()}/content`);
 
 type SidebarItem = {
 	label: string;
@@ -54,18 +55,21 @@ async function getFolderData(path: string): Promise<SidebarItem[]> {
 }
 
 export async function getContentMarkdownData(slug: string[]) {
-	const firstPath = normalize(`${CONTENT_PATH}/${slug.join('/')}.mdx`);
+	const firstPath = normalize(path.join(CONTENT_PATH, `${slug.join('/')}.mdx`));
+
 	if (existsSync(firstPath)) {
-		return await getMarkdownData(
-			normalize(`${CONTENT_PATH}/${slug.join('/')}.mdx`)
-		);
+		return await getMarkdownData(normalize(firstPath));
 	}
-	const secondPath = normalize(`${CONTENT_PATH}/${slug.join('/')}/index.mdx`);
+
+	const secondPath = normalize(
+		path.join(CONTENT_PATH, slug.join('/'), 'index.mdx')
+	);
+
 	return getMarkdownData(normalize(secondPath));
 }
 
 function getHref(path: string, fileName: string) {
-	return `/${path.replace(CONTENT_PATH, '')}/${slugify(
+	return `${path.replace(CONTENT_PATH, '')}/${slugify(
 		stripMdxExtension(normalize(fileName))
 	)}`.replace('/index', '');
 }
@@ -84,7 +88,7 @@ export async function getBreadcrumbs(slug: string[]) {
 			const { data } = await getContentMarkdownData(path);
 			const label = data.title as string;
 			if (idx === slug.length - 1) return { label };
-			return { label, href: path.join('/') };
+			return { label, href: `/${path.join('/')}` };
 		})
 	);
 	return [{ label: 'Home', href: '/' }, ...items];
@@ -97,9 +101,15 @@ export async function getContentPaths() {
 		.map(flattenFolderItems)
 		.flat(99) as string[];
 
-	return flatSideNavItems.map((i) => ({
-		params: { slug: i.split('/').filter(Boolean) },
-	}));
+	return flatSideNavItems
+		.map((i) => {
+			const [category, ...slug] = i.split('/').filter(Boolean);
+			if (!slug.length) return;
+			return {
+				params: { category, slug: slug },
+			};
+		})
+		.filter(Boolean);
 }
 
 function flattenFolderItems(item: {

@@ -16,15 +16,20 @@ import { tokens } from '@ag.ds-next/react/core';
 import { TextLink } from '@ag.ds-next/react/text-link';
 import { AppLayout } from '../components/AppLayout';
 import { DocumentTitle } from '../components/DocumentTitle';
-import { serializeMarkdown } from '../lib/mdxUtils';
-import { getContentMarkdownData } from '../lib/content';
-import { getNavItems, getTopLevelPages } from '../lib/nav';
 import { mdxComponents } from '../components/mdxComponents';
 import { EditPage } from '../components/EditPage';
+import { serializeMarkdown } from '../lib/mdxUtils';
+import { getNavItems, getTopLevelPages } from '../lib/nav';
+import { getHomeMarkdownData, getHomeEditPath } from '../lib/home';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
-export default function HomePage({ navItems, source, topLevelPages }: Props) {
+export default function HomePage({
+	editPath,
+	navItems,
+	source,
+	topLevelPages,
+}: Props) {
 	return (
 		<>
 			<DocumentTitle />
@@ -42,13 +47,13 @@ export default function HomePage({ navItems, source, topLevelPages }: Props) {
 				</HeroBanner>
 				<SectionContent>
 					<Stack gap={3}>
-						<Columns as="ul" cols={{ xs: 1, sm: 2, md: 2 }}>
-							{topLevelPages.map(({ label, slug, overview }, idx) => (
+						<Columns as="ul" cols={{ xs: 1, sm: 2 }}>
+							{topLevelPages.map(({ label, href, overview }, idx) => (
 								<Card as="li" key={idx} shadow clickable>
 									<CardInner>
 										<Stack gap={1}>
 											<H3>
-												<CardLink href={`/${slug}`}>{label}</CardLink>
+												<CardLink href={href}>{label}</CardLink>
 											</H3>
 											{overview ? <Text as="p">{overview}</Text> : null}
 										</Stack>
@@ -59,7 +64,7 @@ export default function HomePage({ navItems, source, topLevelPages }: Props) {
 						<Prose maxWidth={tokens.maxWidth.bodyText}>
 							<MDXRemote {...source} components={mdxComponents} />
 						</Prose>
-						<EditPage path="/content/index.mdx" />
+						<EditPage path={editPath} />
 					</Stack>
 				</SectionContent>
 			</AppLayout>
@@ -68,15 +73,17 @@ export default function HomePage({ navItems, source, topLevelPages }: Props) {
 }
 
 export const getStaticProps: GetStaticProps<{
+	editPath: ReturnType<typeof getHomeEditPath>;
 	navItems: Awaited<ReturnType<typeof getNavItems>>;
 	source: Awaited<ReturnType<typeof serializeMarkdown>>;
 	topLevelPages: Awaited<ReturnType<typeof getTopLevelPages>>;
 }> = async () => {
 	const navItems = await getNavItems();
 	const topLevelPages = await getTopLevelPages();
-	const { content } = await getContentMarkdownData(['index']);
+	const { content } = await getHomeMarkdownData();
 	return {
 		props: {
+			editPath: getHomeEditPath(),
 			navItems,
 			source: await serializeMarkdown(content),
 			topLevelPages,

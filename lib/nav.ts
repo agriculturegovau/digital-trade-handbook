@@ -13,10 +13,12 @@ export async function getTopLevelPages() {
 			const { data } = await getMarkdownData(
 				normalize([CONTENT_PATH, entry.name, 'index.mdx'].join('/'))
 			);
+			const slug = slugify(entry.name);
 			return {
-				label: (data.navTitle || data.title) as string,
+				label: data.title as string,
+				href: `/${slug}`,
+				slug,
 				overview: (data.overview ?? null) as string | null,
-				slug: slugify(entry.name),
 				order: (data.order ?? -1) as number,
 			};
 		})
@@ -35,6 +37,6 @@ export async function getNavItems() {
 	const topLevelPages = await getTopLevelPages();
 	return [
 		{ label: 'Home', href: '/' },
-		...topLevelPages.map(({ label, slug }) => ({ label, href: `/${slug}` })),
+		...topLevelPages.map(({ label, href }) => ({ label, href })),
 	];
 }
