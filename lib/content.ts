@@ -1,11 +1,12 @@
-import { normalize } from 'path';
+import path, { normalize } from 'path';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
 import { getMarkdownData } from './mdxUtils';
 import { stripMdxExtension } from './mdxUtils';
 import { slugify } from './slugify';
 
-export const CONTENT_PATH = normalize(`${process.cwd()}/content/`);
+export const CONTENT_EDIT_PATH = '/content';
+export const CONTENT_PATH = normalize(`${process.cwd()}/content`);
 
 type SidebarItem = {
 	label: string;
@@ -13,8 +14,8 @@ type SidebarItem = {
 	items?: SidebarItem[];
 };
 
-export async function getSidebarItems() {
-	return await getFolderData(CONTENT_PATH);
+export async function getSideNavItems(categorySlug?: string) {
+	return await getFolderData(path.join(CONTENT_PATH, categorySlug ?? ''));
 }
 
 async function getFolderData(path: string): Promise<SidebarItem[]> {
@@ -54,46 +55,17 @@ async function getFolderData(path: string): Promise<SidebarItem[]> {
 }
 
 export async function getContentMarkdownData(slug: string[]) {
-	const firstPath = normalize(`${CONTENT_PATH}/${slug.join('/')}.mdx`);
+	const firstPath = normalize(path.join(CONTENT_PATH, `${slug.join('/')}.mdx`));
+
 	if (existsSync(firstPath)) {
-		return await getMarkdownData(
-			normalize(`${CONTENT_PATH}/${slug.join('/')}.mdx`)
-		);
+		return await getMarkdownData(normalize(firstPath));
 	}
-	const secondPath = normalize(`${CONTENT_PATH}/${slug.join('/')}/index.mdx`);
-	return getMarkdownData(normalize(secondPath));
-}
 
-export async function getContentPaths() {
-	const items = await getFolderHrefs(CONTENT_PATH);
-	return items.map(flattenFolderItems).flat(99).filter(Boolean) as string[];
-}
-
-async function getFolderHrefs(path: string) {
-	const entries = await readdir(path, { withFileTypes: true });
-	const items = await Promise.all(
-		entries.map(async (file) => {
-			const href = getHref(path, file.name);
-			if (file.isDirectory()) {
-				return {
-					href,
-					items: await getFolderData(`${path}/${file.name}`),
-				};
-			}
-			return { href };
-		})
+	const secondPath = normalize(
+		path.join(CONTENT_PATH, slug.join('/'), 'index.mdx')
 	);
-	return items;
-}
 
-function flattenFolderItems(item: {
-	href: string;
-	items?: { href: string }[];
-}): string | unknown[] {
-	if (Array.isArray(item.items)) {
-		return [...item.items.map(flattenFolderItems), item.href];
-	}
-	return item.href;
+	return getMarkdownData(normalize(secondPath));
 }
 
 function getHref(path: string, fileName: string) {
@@ -107,4 +79,45 @@ export async function getEditPath(slug: string[]) {
 		return `/content/${slug.join('/')}.mdx`;
 	}
 	return `/content/${slug.join('/')}/index.mdx`;
+}
+
+export async function getBreadcrumbs(slug: string[]) {
+	const items = await Promise.all(
+		slug.map(async (_, idx) => {
+			const path = slug.slice(0, idx + 1);
+			const { data } = await getContentMarkdownData(path);
+			const label = data.title as string;
+			if (idx === slug.length - 1) return { label };
+			return { label, href: `/${path.join('/')}` };
+		})
+	);
+	return [{ label: 'Home', href: '/' }, ...items];
+}
+
+export async function getContentPaths() {
+	const sideNavItems = await getSideNavItems();
+
+	const flatSideNavItems = sideNavItems
+		.map(flattenFolderItems)
+		.flat(99) as string[];
+
+	return flatSideNavItems
+		.map((i) => {
+			const [category, ...slug] = i.split('/').filter(Boolean);
+			if (!slug.length) return;
+			return {
+				params: { category, slug: slug },
+			};
+		})
+		.filter(Boolean);
+}
+
+function flattenFolderItems(item: {
+	href: string;
+	items?: { href: string }[];
+}): string | unknown[] {
+	if (Array.isArray(item.items)) {
+		return [...item.items.map(flattenFolderItems), item.href];
+	}
+	return item.href;
 }
