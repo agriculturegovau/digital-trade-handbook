@@ -46,7 +46,7 @@ export default function HomePage({
 					</HeroBannerSubtitle>
 				</HeroBanner>
 				<SectionContent>
-					<Stack gap={3}>
+					<Stack gap={3} alignItems="flex-start">
 						<Columns as="ul" cols={{ xs: 1, sm: 2 }}>
 							{topLevelPages.map(({ label, href, overview }, idx) => (
 								<Card as="li" key={idx} shadow clickable>

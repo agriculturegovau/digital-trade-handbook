@@ -34,15 +34,15 @@ export async function getCategoryPages(categorySlug: string) {
 		});
 }
 
-export async function getCategoryEditPath(categorySlug: string) {
-	return [CONTENT_EDIT_PATH, categorySlug, 'index.mdx'].join('/');
-}
-
 export async function getCategoryMarkdownData(categorySlug: string) {
 	const filePath = normalize(
 		path.join(CONTENT_PATH, categorySlug, 'index.mdx')
 	);
 	return await getMarkdownData(filePath);
+}
+
+export async function getCategoryEditPath(categorySlug: string) {
+	return [CONTENT_EDIT_PATH, categorySlug, 'index.mdx'].join('/');
 }
 
 export async function getCategoryPaths() {

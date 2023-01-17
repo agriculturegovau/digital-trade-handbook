@@ -53,7 +53,7 @@ export default function ContentPage({
 							</ContentBleed>
 						</Column>
 						<Column columnSpan={{ xs: 12, md: 8 }} columnStart={{ lg: 5 }}>
-							<Stack gap={3}>
+							<Stack gap={3} alignItems="flex-start">
 								<Breadcrumbs links={breadcrumbs} />
 								<PageTitle title={title} introduction={overview} />
 								{toc.length > 1 ? (
@@ -95,7 +95,12 @@ export const getStaticProps: GetStaticProps<
 	},
 	{ category: string; slug: string[] }
 > = async ({ params }) => {
-	const slugParams: string[] = [params?.category, ...params?.slug];
+	const { category, slug } = params ?? {};
+
+	if (!(category && slug)) {
+		return { notFound: true };
+	}
+	const slugParams = [category, ...slug];
 	const [categorySlug] = slugParams;
 
 	const {
