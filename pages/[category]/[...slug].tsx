@@ -41,7 +41,7 @@ export default function ContentPage({
 		<>
 			<DocumentTitle title={title} />
 			<AppLayout navItems={navItems}>
-				<PageContent>
+				<PageContent as="main" id="main-content">
 					<Columns>
 						<Column columnSpan={{ xs: 12, md: 4, lg: 3 }}>
 							<ContentBleed visible={{ md: false }}>

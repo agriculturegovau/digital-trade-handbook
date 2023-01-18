@@ -34,39 +34,41 @@ export default function HomePage({
 		<>
 			<DocumentTitle />
 			<AppLayout navItems={navItems}>
-				<HeroBanner>
-					<HeroBannerTitle>Taking Farmers to Markets service</HeroBannerTitle>
-					<HeroBannerSubtitle>
-						This handbook is by the Taking Farmers to Markets service teams.
-						This service is part of the Australian Government{' '}
-						<TextLink href="https://www.agriculture.gov.au/">
-							Department of Agriculture, Fisheries and Forestry
-						</TextLink>
-						.
-					</HeroBannerSubtitle>
-				</HeroBanner>
-				<SectionContent>
-					<Stack gap={3} alignItems="flex-start">
-						<Columns as="ul" cols={{ xs: 1, sm: 2 }}>
-							{topLevelPages.map(({ label, href, overview }, idx) => (
-								<Card as="li" key={idx} shadow clickable>
-									<CardInner>
-										<Stack gap={1}>
-											<H3>
-												<CardLink href={href}>{label}</CardLink>
-											</H3>
-											{overview ? <Text as="p">{overview}</Text> : null}
-										</Stack>
-									</CardInner>
-								</Card>
-							))}
-						</Columns>
-						<Prose maxWidth={tokens.maxWidth.bodyText}>
-							<MDXRemote {...source} components={mdxComponents} />
-						</Prose>
-						<EditPage path={editPath} />
-					</Stack>
-				</SectionContent>
+				<main id="main-content">
+					<HeroBanner>
+						<HeroBannerTitle>Taking Farmers to Markets service</HeroBannerTitle>
+						<HeroBannerSubtitle>
+							This handbook is by the Taking Farmers to Markets service teams.
+							This service is part of the Australian Government{' '}
+							<TextLink href="https://www.agriculture.gov.au/">
+								Department of Agriculture, Fisheries and Forestry
+							</TextLink>
+							.
+						</HeroBannerSubtitle>
+					</HeroBanner>
+					<SectionContent>
+						<Stack gap={3} alignItems="flex-start">
+							<Columns as="ul" cols={{ xs: 1, sm: 2 }}>
+								{topLevelPages.map(({ label, href, overview }, idx) => (
+									<Card as="li" key={idx} shadow clickable>
+										<CardInner>
+											<Stack gap={1}>
+												<H3>
+													<CardLink href={href}>{label}</CardLink>
+												</H3>
+												{overview ? <Text as="p">{overview}</Text> : null}
+											</Stack>
+										</CardInner>
+									</Card>
+								))}
+							</Columns>
+							<Prose maxWidth={tokens.maxWidth.bodyText}>
+								<MDXRemote {...source} components={mdxComponents} />
+							</Prose>
+							<EditPage path={editPath} />
+						</Stack>
+					</SectionContent>
+				</main>
 			</AppLayout>
 		</>
 	);
