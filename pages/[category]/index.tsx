@@ -34,29 +34,31 @@ export default function CategoryPage({
 		<>
 			<DocumentTitle title={title} />
 			<AppLayout navItems={navItems}>
-				<HeroCategoryBanner>
-					<HeroCategoryBannerTitle>{title}</HeroCategoryBannerTitle>
-					<HeroCategoryBannerSubtitle>{overview}</HeroCategoryBannerSubtitle>
-				</HeroCategoryBanner>
-				<SectionContent>
-					<Stack gap={3} alignItems="flex-start">
-						<Columns as="ul" cols={{ xs: 1, sm: 2, md: 3 }}>
-							{categoryPages.map(({ label, href, overview }, idx) => (
-								<Card as="li" key={idx} shadow clickable>
-									<CardInner>
-										<Stack gap={1}>
-											<H3>
-												<CardLink href={href}>{label}</CardLink>
-											</H3>
-											{overview ? <Text as="p">{overview}</Text> : null}
-										</Stack>
-									</CardInner>
-								</Card>
-							))}
-						</Columns>
-						<EditPage path={editPath} />
-					</Stack>
-				</SectionContent>
+				<main id="main-content">
+					<HeroCategoryBanner>
+						<HeroCategoryBannerTitle>{title}</HeroCategoryBannerTitle>
+						<HeroCategoryBannerSubtitle>{overview}</HeroCategoryBannerSubtitle>
+					</HeroCategoryBanner>
+					<SectionContent>
+						<Stack gap={3} alignItems="flex-start">
+							<Columns as="ul" cols={{ xs: 1, sm: 2, md: 3 }}>
+								{categoryPages.map(({ label, href, overview }, idx) => (
+									<Card as="li" key={idx} shadow clickable>
+										<CardInner>
+											<Stack gap={1}>
+												<H3>
+													<CardLink href={href}>{label}</CardLink>
+												</H3>
+												{overview ? <Text as="p">{overview}</Text> : null}
+											</Stack>
+										</CardInner>
+									</Card>
+								))}
+							</Columns>
+							<EditPage path={editPath} />
+						</Stack>
+					</SectionContent>
+				</main>
 			</AppLayout>
 		</>
 	);

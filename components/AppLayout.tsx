@@ -13,7 +13,10 @@ export const AppLayout = ({ children, navItems }: AppLayoutProps) => {
 	return (
 		<Fragment>
 			<SkipLinks
-				links={[{ href: '#main-content', label: 'Skip to main content' }]}
+				links={[
+					{ href: '#main-content', label: 'Skip to main content' },
+					{ href: '#main-nav', label: 'Skip to main navigation' },
+				]}
 			/>
 			<Flex flexDirection="column" fontFamily="body" minHeight="100vh">
 				<SiteHeader navItems={navItems} />
