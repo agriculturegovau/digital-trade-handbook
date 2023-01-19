@@ -21,7 +21,15 @@ export const AppLayout = ({ children, navItems }: AppLayoutProps) => {
 			<Flex flexDirection="column" fontFamily="body" minHeight="100vh">
 				<SiteHeader navItems={navItems} />
 				<Box flexGrow={1}>{children}</Box>
-				<SiteFooter navItems={navItems} />
+				<SiteFooter
+					navItems={[
+						...navItems,
+						{
+							label: 'Privacy',
+							href: 'https://www.agriculture.gov.au/about/commitment/privacy',
+						},
+					]}
+				/>
 			</Flex>
 		</Fragment>
 	);
