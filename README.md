@@ -13,7 +13,7 @@ We welcome contributions to the handbook, including pull requests. Read our [gui
 
 All content is made available for reuse under the [CC BY 4.0 license][licence-url].
 
-[handbook-url]: https://handbook.agtrade.digital/
+[handbook-url]: https://agriculturegovau.github.io/digital-trade-handbook/
 [dawe-url]: https://www.awe.gov.au/
 [editing-url]: https://handbook.agtrade.digital/editing/
 [licence-url]: https://creativecommons.org/licenses/by/4.0/
